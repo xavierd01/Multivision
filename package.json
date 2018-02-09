@@ -1,0 +1,15 @@
+{
+  "name": "multivision",
+  "version": "1.0.0",
+  "description": "Extreme Tech Training",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Wil Paulk",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "pug": "^2.0.0-rc.4"
+  }
+}
