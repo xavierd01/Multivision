@@ -9,7 +9,11 @@
   "author": "Wil Paulk",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "pug": "^2.0.0-rc.4"
+    "mongoose": "^5.0.4",
+    "morgan": "^1.9.0",
+    "pug": "^2.0.0-rc.4",
+    "stylus": "^0.54.5"
   }
 }
