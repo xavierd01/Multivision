@@ -41,13 +41,6 @@ db.on('error', console.error.bind(console, 'connection error...'));
 db.once('open', function callback() {
     console.log('multivision db opened');
 });
-// set up our schemas
-let messageSchema = mongoose.Schema( { message: String } );
-let Message = mongoose.model('Message', messageSchema);
-let mongoMessage;
-Message.findOne().exec(function(err, messageDoc) {
-    mongoMessage = messageDoc.message;
-});
 
 // ** Routing  **//
 app.get('/partials/:partialPath', function(req, res) {
@@ -56,9 +49,7 @@ app.get('/partials/:partialPath', function(req, res) {
 
 // catch all route
 app.get('*', function(req, res) {
-    res.render('index', {
-        mongoMessage: mongoMessage
-    });
+    res.render('index');
 });
 
 // ** Startup **//
