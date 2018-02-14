@@ -1,58 +1,20 @@
-let express = require('express'),
-    stylus = require('stylus'),
-    logger = require('morgan'),
-    bodyParser = require('body-parser'),
-    mongoose = require('mongoose');
+let express = require('express');
 
 let env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // ** Express Configuration **//
 let app = express();
 
-// compile function for our stylus middleware.
-function compile(str, path) {
-    return stylus(str).set('filename', path);
-}
+let config = require('./server/config/config')[env];
 
-// configure our express app.
-app.set('views', __dirname + '/server/views');
-app.set('view engine', 'pug');
-app.use(logger('dev'));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(stylus.middleware(
-    {
-        src: __dirname + '/public',
-        compile: compile
-    }
-));
-app.use(express.static(__dirname + '/public'));
+require('./server/config/express')(app, config);
 
 // ** Database **//
-// set up database connection
-if(env === 'development') {
-    mongoose.connect('mongodb://localhost/multivision');
-}
-else {
-    mongoose.connect('mongodb://wpaulk:multivision@ds235418.mlab.com:35418/multivision');
-}
-let db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error...'));
-db.once('open', function callback() {
-    console.log('multivision db opened');
-});
+require('./server/config/mongoose')(config);
 
 // ** Routing  **//
-app.get('/partials/:partialPath', function(req, res) {
-    res.render('partials/' + req.params.partialPath);
-});
-
-// catch all route
-app.get('*', function(req, res) {
-    res.render('index');
-});
+require('./server/config/routes')(app);
 
 // ** Startup **//
-let port = process.env.PORT || 3030;
-app.listen(port);
-console.log('Listening on port ' + port + '...');
+app.listen(config.port);
+console.log('Listening on port ' + config.port + '...');
