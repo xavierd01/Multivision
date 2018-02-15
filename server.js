@@ -12,6 +12,9 @@ require('./server/config/express')(app, config);
 // ** Database **//
 require('./server/config/mongoose')(config);
 
+// ** Authentication Configuration **//
+require('./server/config/passport')();
+
 // ** Routing  **//
 require('./server/config/routes')(app);
 
