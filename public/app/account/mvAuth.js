@@ -16,6 +16,38 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) 
             return dfd.promise;
         },
 
+        authorizeCurrentUserForRoute: function(role) {
+            if (mvIdentity.isAuthorized(role)) {
+                return true;
+            }
+            else {
+                return $q.reject('not authorized');
+            }
+        },
+
+        authorizeAuthenticatedUserForRoute: function() {
+            if (mvIdentity.isAuthenticated()) {
+                return true;
+            }
+            else {
+                return $q.reject('not authorized');
+            }
+        },
+
+        createUser: function(newUserData) {
+            let newUser = new mvUser(newUserData);
+            let dfd = $q.defer();
+            
+            newUser.$save().then(function() {
+                mvIdentity.currentUser = newUser;
+                dfd.resolve();
+            }, function(response) {
+                dfd.reject(response.data.reason);
+            });
+
+            return dfd.promise;
+        },
+
         logoutUser: function() {
             let dfd = $q.defer();
             $http.post('/logout', {logout:true}).then(function() {
@@ -25,13 +57,21 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) 
             return dfd.promise;
         },
 
-        authorizeCurrentUserForRoute: function(role) {
-            if (mvIdentity.isAuthorized(role)) {
-                return true;
-            }
-            else {
-                return $q.reject('not authorized');
-            }
-        }
+        updateCurrentUser: function(newUserData) {
+            let dfd = $q.defer();
+
+            let clone = angular.copy(mvIdentity.currentUser);
+            angular.extend(clone, newUserData);
+            clone.$update().then(function() {
+                mvIdentity.currentUser = clone;
+                dfd.resolve();
+            }, function(response) {
+                dfd.reject(response.data.reason);
+            });
+
+            return dfd.promise;
+        },
+
+        
     }
 });
